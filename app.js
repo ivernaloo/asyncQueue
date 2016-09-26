@@ -54,6 +54,8 @@ function tree(data){
         switch (key){
             case "type":
                 data.result = DICT[data[key]];
+                delete data[key];
+                delete data["level"];
                 break;
             case "child":
                 // traverse child
