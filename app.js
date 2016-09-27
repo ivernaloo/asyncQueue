@@ -35,13 +35,16 @@ function Init(){
         function(done){
             tree(TREE.tree);
             done();
+        },
+        function(done){
+            submit(TREE, done);
         }
     ], function(err){
         if (err) console.error(err.stack);
 
         console.log('完成URL 列表遍历存储!');
         console.log("Dictionary : ", DICT);
-        console.log("TREE : ", TREE.tree);
+        console.log("TREE : ", JSON.stringify(TREE.tree));
     });
 }
 
@@ -53,7 +56,7 @@ function tree(data){
     Object.keys(data).forEach(function(key, index){
         switch (key){
             case "type":
-                data.result = DICT[data[key]];
+                data.result = DICT[data[key]].toString();
                 delete data[key];
                 delete data["level"];
                 break;
@@ -78,9 +81,24 @@ function getValue(key, callback){
     }, function(err, res, body){
         if (body !== undefined) {
             DICT[key] = body;
-            console.log(" key : -------------- ", key," - " , DICT[key]);
         }
 
+        callback();
+    })
+}
+
+function submit(data, callback){
+    request({
+        method: "POST",
+        url: "http://hr.tuputech.com/recruit/v2/tree/",
+        body : {
+            treeId : TREE.treeId,
+            result : TREE.tree,
+            seed : "57e8952c86b5987977928381"
+        },
+        json: true
+    }, function(err, res, body){
+        console.log("result : ", body);
         callback();
     })
 }
